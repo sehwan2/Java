@@ -136,24 +136,34 @@ class subject{
 
 class ManagementSystem{
 	Scanner input = new Scanner(System.in);
-	subject[] student(int p, student[] stu, professor[] pro,subject[] sub) {
+	subject[] student(int check_number, student[] stu, professor[] pro,subject[] sub) {
+		
+		System.out.println("학생모드입니다.");
+		System.out.println("-----1.신청\t2.확인");
+		check_number = input.nextInt();
+		if(check_number != 1 && check_number != 2) {
+			System.out.println("올바른 입력이 아닙니다.");
+			return sub;
+		}
+		
 		System.out.println("학번을 입력하세요.");
 		int student_number = input.nextInt();
 		
 		//학번 확인
-		for (int i = 0; i < stu.length; i++) {
-			if(stu[i].getStudent_number() == student_number) {
+		int student = 0;
+		for (student = 0; student < stu.length; student++) {
+			if(stu[student].getStudent_number() == student_number) {
 				System.out.println("학번 확인이 되었습니다.");
 				break;
 			}
-			if(i == stu.length) {
+			if(student == stu.length) {
 				System.out.println("존재하지 않는 학번입니다.");
 				return sub;
 			}
 		}
 		
 		//신청
-		if(p == 1) {
+		if(check_number == 1) {
 		
 			System.out.println("수강신청입니다.");
 			System.out.println("3회 반복합니다.");
@@ -173,32 +183,54 @@ class ManagementSystem{
 			}
 			sub[(choice-1)].setStu(student_number);
 			}
+			return sub;
 		}
 		
 		//확인
-		if(p == 2){
+		if(check_number == 2){
+			System.out.println("학생 확인입니다.");
 			
-			
-			
-			
-			
-			//이 학생이 듣고 있는 과목
-			for (int i = 0; i < sub.length; i++) {
-				for(int j = 0; j < 10; j++)
-				if(sub[i].getStu(j) == student_number) {
-					//
+			System.out.println("학번 : "+stu[student].getStudent_number());
+			System.out.println("이름 : "+stu[student].getName());
+			System.out.println("학과 : "+stu[student].getMajor());
+			System.out.println("학년 : "+stu[student].getGrade());
+			System.out.println("전화번호 : "+stu[student].getPhone_number());
+				
+			int score = 0;
+			System.out.println("신청한 과목 : ");
+				//이 학생이 듣고 있는 과목
+				for (int i = 0; i < sub.length; i++) {
+					for(int j = 0; j < 10; j++)
+					if(sub[i].getStu(j) == student_number) {
+						System.out.println("\t\t\t"+"."+sub[i].getName());
+						score += sub[i].getScore();
+					}
 				}
-			}
-			//듣고 있는 과목의 학점 총계
-			
+				//듣고 있는 과목의 학점 총계
+			System.out.println("듣고 있는 과목의 학점 총계 : " + score);
 		}
-		
-		
+
 		
 		return sub;
 	}
-	void professor() {
-		
+	void professor(int check_number, professor[] pro, subject[] sub) {
+		System.out.println("교수모드입니다.");
+		System.out.print("담당교수의 인사번호를 입력하세요 >>>");
+		check_number = input.nextInt();
+		for (int i = 0; i < pro.length; i++) {
+			if(pro[i].getUser_number() == check_number) {
+				System.out.println("인사번호 확인이 되었습니다.");
+				System.out.print("과목코드를 입력하세요 >>>");
+				check_number = input.nextInt();
+				for (int j = 0; j < sub.length; j++) {
+					if(sub[j].getCode() == check_number) {
+						break;
+					}
+				}
+				break;
+			}
+		}
+		System.out.println("존재하지 않는 인사번호입니다.");
 	}
 }
 
@@ -262,40 +294,15 @@ public class Homework2 {
 			system = input.nextInt();
 			switch(system) {
 				case 1:
-					System.out.println("학생모드입니다.");
-					System.out.println("-----1.신청\t2.확인");
-					check_number = input.nextInt();
-					if(check_number != 1 && check_number != 2) {
-						System.out.println("올바른 입력이 아닙니다.");
-						break;
-					}
 					sub = manage.student(check_number, stu, pro, sub);
 					break;
 				case 2:
-					System.out.println("교수모드입니다.");
-					System.out.print("담당교수의 인사번호를 입력하세요 >>>");
-					check_number = input.nextInt();
-					for (int i = 0; i < pro.length; i++) {
-						if(pro[i].getUser_number() == check_number) {
-							System.out.println("인사번호 확인이 되었습니다.");
-							System.out.print("과목코드를 입력하세요 >>>");
-							check_number = input.nextInt();
-							for (int j = 0; j < sub.length; j++) {
-								if(sub[j].getCode() == check_number) {
-									
-									break;
-								}
-								
-							}
-							break;
-						}
-					}
-					System.out.println("존재하지 않는 인사번호입니다.");
+					manage.professor(check_number, pro, sub);
 					break;
 				case 3:
-					System.out.println("종료합니다."); break;
+					System.out.println("종료합니다."); 
+					break;
 			}
-			
 			if(system == 3)
 				break;
 		}
@@ -311,65 +318,30 @@ public class Homework2 {
 
 /*
 	[과제내용] 
-
   직원의 학생등록, 교수등록, 과목등록, 담당교수 배정 후 학생의 수강신청, 신청확인, 그리고 교수의 수강자 확인을 할 수 있는 수강신청관리 프로그램을 
-
   객체지향 버전(버전 6)으로 작성하시오.
-
-
-
   {절차}    학생정보 입력 (10명 반복)
-
                   |
-
              교수정보 입력 (3명 반복)
-
                   |
-
              과목정보 입력 및 담당교수 배정 (5과목 반복)             
-
                   |
-
        ㅜ   모드(학생, 교수, 종료) 선택
-
         |         |---------------------------------------------------------------------------------------------------ㄱ
-
         |         |                                                                    |                                                 |
-
         |    (학생모드 경우)                                                  (교수모드 경우)                             (종료 경우)
-
         |         L 메뉴(신청, 확인) 선택                                        L  담당교수 인사번호입력                L 프로그램 종료
-
         |                 |                                                                       |
-
         |                 |                                                                과목코드 입력
-
   반복|                 |--------------------------------------ㄱ                        |
-
         |                 |                                              |                  수강자 명단 보기
-
         |          (신청 경우)                                 (확인 경우)
-
         |                    |                                           |
-
         |                 학번 입력                                학번 입력
-
         |                    |                                           |
-
         L                 신청과목 입력 (3회 반복)            수강신청 내역 보기 
-
-
-
       ※ 수강신청 내역은 상단에 학번, 이름, 학과, 학년, 전화번호를 보여준 다음, 신청과목 목록을 보여주며, 하단에 신청학점 총계를 표시한다.
-
           신청과목 목록은 {연번, 과목코드, 과목명, 학점, 담당교수명}의 리스트이다.
-
-
-
       ※ 수강자 명단은 상단에 담당교수의 이름, 학과, 전화번호, 수강인원을 보여준 다음, 수강자 목록을 보여준다.
-
            수강자 목록은 {연번, 이름, 학번, 학과, 학년}의 리스트이다.
-
-
-
 */
